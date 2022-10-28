@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -38,6 +38,23 @@ func main() {
 
 }
 
+func printInstructions() {
+	log.Print(`
+	Instructions for product-server:
+	1 - GET /products returns all products
+		curl localhost:8080/products
+	2 - GET /products/{id} returns the specified product or a 404 status code if not found
+		curl localhost:8080/products/60
+		curl localhost:8080/products/200
+	3 - POST /products adds a new product to the server which should be listed on subsequent calls to retrieve all products
+		curl -X POST localhost:8080/products -H "content-type: application/json" -d {"id": 101, "name": "AirPods Pro (2nd gen)", "description":"Newest earbuds from Apple", "price": 249}
+	4 - PUT /products/{id} updates a product\'s name and price
+		curl -X PUT localhost:8080/products/101 -H "content-type: application/json" -d {"name": "AirPods Pro", "price": 199}
+	5 - DELETE /products/{id} removes a product from the server
+		curl -X DELETE localhost:8080/products/101
+	`)
+}
+
 func initProducts() {
 	log.Println("Reading JSON file...")
 	bs, err := os.ReadFile("products.json")
@@ -70,7 +87,7 @@ func GetProductsHandler(w http.ResponseWriter, r *http.Request) {
 func AddProductHandler(w http.ResponseWriter, r *http.Request) {
 	var newProduct product
 	log.Println("Received product POST request. Reading incoming JSON...")
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
 		log.Println(err)
@@ -129,7 +146,7 @@ func UpdateProductIDHandler(w http.ResponseWriter, r *http.Request) {
 	for _, v := range products {
 		if strconv.Itoa(v.ID) == vars["id"] {
 			log.Println("Product ID found. Reading new product data...")
-			bs, err := ioutil.ReadAll(r.Body)
+			bs, err := io.ReadAll(r.Body)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				log.Println(err)
