@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -61,7 +62,6 @@ func GetProductsHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
 	log.Println("Write successful.")
 }
 
@@ -90,18 +90,116 @@ func AddProductHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
 	log.Println("Successfully added product to list.")
 }
 
 func GetProductIDHandler(w http.ResponseWriter, r *http.Request) {
-
+	vars := mux.Vars(r)
+	log.Println("Received product GET request for ID", vars["id"], "- checking for product...")
+	for _, v := range products {
+		if strconv.Itoa(v.ID) == vars["id"] {
+			log.Println("Product ID found. Marshaling product data...")
+			bs, err := json.MarshalIndent(v, "", "")
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+			}
+			w.Header().Add("content-type", "application/json")
+			log.Println("Marshal successful. Writing JSON...")
+			if _, err := w.Write(bs); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+			}
+			log.Println("Write successful.")
+			return
+		}
+	}
+	w.WriteHeader(http.StatusNotFound)
+	log.Println("Product ID not found...")
 }
 
 func UpdateProductIDHandler(w http.ResponseWriter, r *http.Request) {
-
+	var newProductInfo map[string]interface{}
+	var updatedProduct bool
+	newProducts := []product{}
+	vars := mux.Vars(r)
+	log.Println("Received product PUT request for ID", vars["id"], "- checking for product...")
+	for _, v := range products {
+		if strconv.Itoa(v.ID) == vars["id"] {
+			log.Println("Product ID found. Reading new product data...")
+			bs, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+			}
+			defer r.Body.Close()
+			log.Println("Read successful. Unmarshaling data...")
+			if err := json.Unmarshal(bs, &newProductInfo); err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				log.Println(err)
+			}
+			log.Println("Unmarshal successful. Marshaling new product data...")
+			if id, ok := newProductInfo["id"]; ok {
+				v.ID = int(id.(float64))
+			} else {
+				log.Println("New id not found...")
+			}
+			if name, ok := newProductInfo["name"]; ok {
+				v.Name = name.(string)
+			} else {
+				log.Println("New name not found...")
+			}
+			updatedProduct = true
+		}
+		newProducts = append(newProducts, v)
+	}
+	if updatedProduct {
+		products = newProducts
+		ns, err := json.MarshalIndent(products, "", "  ")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+		log.Println("Marshal successful. Writing new product data...")
+		if err := os.WriteFile("products.json", ns, 0666); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+		log.Println("Write successful. Product info updated.")
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		log.Println("Product ID not found...")
+	}
 }
 
 func DeleteProductIDHandler(w http.ResponseWriter, r *http.Request) {
-
+	var deletedProduct bool
+	newProducts := []product{}
+	vars := mux.Vars(r)
+	log.Println("Received product DELETE request for ID", vars["id"], "- checking for product...")
+	for _, v := range products {
+		if strconv.Itoa(v.ID) != vars["id"] {
+			newProducts = append(newProducts, v)
+		} else {
+			deletedProduct = true
+		}
+	}
+	if deletedProduct {
+		log.Println("Product ID found. Marshaling new product data...")
+		products = newProducts
+		bs, err := json.MarshalIndent(products, "", "  ")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+		log.Println("Marshal successful. Writing new product data...")
+		if err := os.WriteFile("products.json", bs, 0666); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+		}
+		log.Println("Write successful. Product info updated.")
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		log.Println("Product ID not found...")
+	}
 }
