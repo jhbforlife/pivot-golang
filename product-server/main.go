@@ -22,6 +22,8 @@ var products []product
 
 func main() {
 
+	printInstructions()
+
 	initProducts()
 
 	r := mux.NewRouter()
@@ -139,15 +141,15 @@ func UpdateProductIDHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 			}
 			log.Println("Unmarshal successful. Marshaling new product data...")
-			if id, ok := newProductInfo["id"]; ok {
-				v.ID = int(id.(float64))
-			} else {
-				log.Println("New id not found...")
-			}
 			if name, ok := newProductInfo["name"]; ok {
 				v.Name = name.(string)
 			} else {
 				log.Println("New name not found...")
+			}
+			if price, ok := newProductInfo["price"]; ok {
+				v.ID = int(price.(float64))
+			} else {
+				log.Println("New id not found...")
 			}
 			updatedProduct = true
 		}

@@ -21,7 +21,7 @@ Build an HTTP server that supports returning product information such as name an
     2. `GET /products/{id}` returns the specified product or a 404 status code if not found
     3. `POST /products` adds a new product to the server which should be listed on subsequent calls to retrieve all products
     4. `PUT /products/{id}` updates a product’s name and price
-    5. `DELETE /product/{id}` removes a product from the server
+    5. `DELETE /products/{id}` removes a product from the server
 4. Provide a link to a GitHub pull request (PR) against your repository’s main branch with your solution for evaluation.
 
 # Resources
