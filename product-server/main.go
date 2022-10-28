@@ -50,7 +50,7 @@ func initProducts() {
 
 func GetProductsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received product GET request. Marshaling all product data...")
-	bs, err := json.MarshalIndent(products, "", "    ")
+	bs, err := json.MarshalIndent(products, "", "  ")
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -81,7 +81,7 @@ func AddProductHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Unmarshal successful. Adding to existing products...")
 	products = append(products, newProduct)
-	bs, err := json.MarshalIndent(products, "", "    ")
+	bs, err := json.MarshalIndent(products, "", "  ")
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
