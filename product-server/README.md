@@ -1,5 +1,47 @@
 # Assignment: Build a Product Server
 
+# Server Instructions and Examples of Implementation
+1. `GET /products` returns all products
+
+input:  
+curl localhost:8080/products
+output: 
+[{"id":1,"name":"Water - San Pellegrino","description":"curae nulla dapibus dolor vel est donec odio justo sollicitudin ut suscipit a feugiat et eros vestibulum ac est lacinia","price":80},...{"id":100,"name":"Shrimp - Black Tiger 16/20","description":"ultrices enim lorem ipsum dolor sit amet consectetuer adipiscing elit proin","price":63}]
+
+2. `GET /products/{id}` returns the specified product or a 404 status code if not found
+
+input:
+curl localhost:8080/products/60
+output: 
+{"id":60,"name":"Cookies - Englishbay Wht","description":"rutrum nulla nunc purus phasellus in felis donec semper sapien a libero nam dui proin leo odio porttitor id","price":46}
+
+input:
+curl localhost:8080/products/200
+output:
+404 Not Found
+
+3. `POST /products` adds a new product to the server which should be listed on subsequent calls to retrieve all products
+
+input:
+curl -X POST localhost:8080/products -H "content-type: application/json" -d '{"id": 101, "name": "AirPods Pro (2nd gen)", "description":"Newest earbuds from Apple", "price": 249}'
+output:
+201 Created
+	
+4. `PUT /products/{id}` updates a product’s name and price
+
+input:
+curl -X PUT localhost:8080/products/101 -H "content-type: application/json" -d '{"name": "AirPods Pro", "price": 199}'
+output:
+202 Accepted
+	
+5. `DELETE /products/{id}` removes a product from the server
+
+input:
+curl -X DELETE localhost:8080/products/101
+output:
+202 Accepted
+
+# Assignment Instructions
 # Objective
 
 Build an HTTP server that supports returning product information such as name and price. The server should also support the ability to retrieve the complete list of products or a single product based on its ID. Adding and updating new products are also expected.
@@ -32,3 +74,4 @@ Build an HTTP server that supports returning product information such as name an
 # Notes
 
 Product additions, updates, and deletions are not expected to be reflected in the products.json file you initialize the server with.
+(I did not see this, thus, my server reflects changes in my products.json file.)
