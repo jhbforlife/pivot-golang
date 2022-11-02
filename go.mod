@@ -1,4 +1,4 @@
-module github.com/jhbforlife/product-server
+module github.com/jhbforlife/pivot-golang
 
 go 1.19
 
