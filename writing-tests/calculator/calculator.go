@@ -17,7 +17,6 @@ func Multiply(a, b int) int {
 func Divide(a, b int) (int, error) {
 	if b == 0 {
 		return 0, errors.New("calculator: cannot divide by 0, please try again")
-	} else {
-		return a / b, nil
 	}
+	return a / b, nil
 }
