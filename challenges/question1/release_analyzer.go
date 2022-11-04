@@ -1,11 +1,12 @@
+// Given Code
 package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math"
 	"os"
+	"sort"
 )
 
 type ReleaseAnalyzer interface {
@@ -34,42 +35,42 @@ func NewAnalyzer() *Analyzer {
 }
 
 func (a *Analyzer) GetReleaseStats() ([]ReleaseStats, error) {
-	resp := getResp()
-	fmt.Println(resp[0])
-	respByVersion := sortRespVersion(resp)
-	fmt.Println(respByVersion["77de68daecd823babbb58edb1c8e14d7106e83bb"])
-	queryStatsByVersion := getStats(respByVersion)
-	fmt.Println(queryStatsByVersion["77de68daecd823babbb58edb1c8e14d7106e83bb"])
-	bestWorst := getBestWorst(queryStatsByVersion)
-	fmt.Println(bestWorst)
-	return []ReleaseStats{}, errors.New("not implemented")
+	// Given code
+	// return nil, errors.New("not implemented")
+	// Added code
+	events := getEvents()
+	eventsByRelease := sortEventsByRelease(events)
+	return getStats(eventsByRelease), nil
 }
 
 func (a *Analyzer) GetReleaseQuality() (ReleaseQuality, error) {
-	return ReleaseQuality{}, errors.New("not implemented")
+	// Given code
+	// return nil, errors.New("not implemented")
+	// Added code
+	eventsByRelease, err := a.GetReleaseStats()
+	checkErr(err)
+	return getBestWorst(eventsByRelease), nil
 }
 
 func (a *Analyzer) GetReleaseHistory() ([]string, error) {
-	return nil, errors.New("not implemented")
+	// Given code
+	// return nil, errors.New("not implemented")
+	// Added code
+	eventsByRelease, err := a.GetReleaseStats()
+	checkErr(err)
+	return getHistory(eventsByRelease), nil
 }
 
+// Added code
 type event struct {
-	Timestamp int    `json:"timestamp"`
-	Version   string `json:"version"`
-	QueryTime int    `json:"query_time"`
+	Timestamp float64 `json:"timestamp"`
+	Version   string  `json:"version"`
+	QueryTime float64 `json:"query_time"`
 }
 
-type eventByVersion map[string][]event
+type eventsByRelease map[string][]event
 
-type queryStats struct {
-	minimum int
-	average float64
-	maximum int
-}
-
-type queryStatsByVersion map[string]queryStats
-
-func getResp() []event {
+func getEvents() []event {
 	es := []event{}
 	bs, readErr := os.ReadFile("events.json")
 	checkErr(readErr)
@@ -78,20 +79,20 @@ func getResp() []event {
 	return es
 }
 
-func sortRespVersion(resp []event) eventByVersion {
-	vm := eventByVersion{}
-	for _, v := range resp {
+func sortEventsByRelease(events []event) eventsByRelease {
+	vm := eventsByRelease{}
+	for _, v := range events {
 		vm[v.Version] = append(vm[v.Version], v)
 	}
 	return vm
 }
 
-func getStats(vs eventByVersion) queryStatsByVersion {
-	qm := queryStatsByVersion{}
-	for k, v := range vs {
-		var min int
+func getStats(rs eventsByRelease) []ReleaseStats {
+	qs := []ReleaseStats{}
+	for k, v := range rs {
+		var min float64
 		var avg float64
-		var max int
+		var max float64
 		for i, e := range v {
 			if e.QueryTime < min || i == 0 {
 				min = e.QueryTime
@@ -101,17 +102,45 @@ func getStats(vs eventByVersion) queryStatsByVersion {
 			avg += float64(e.QueryTime)
 		}
 		avg = math.Round((avg / float64(len(v)) * 100)) / 100
-		qm[k] = queryStats{minimum: min, average: avg, maximum: max}
+		qs = append(qs, ReleaseStats{k, min, avg, max})
 	}
-	return qm
+	return qs
 }
 
-func getBestWorst(qm queryStatsByVersion) []string {
-	ss := []string{}
-	// for k, v := range qm {
+func getBestWorst(qs []ReleaseStats) ReleaseQuality {
+	var best float64
+	var worst float64
+	var rq ReleaseQuality
+	for i, e := range qs {
+		avg := e.avgQueryTime
+		if i == 0 {
+			best = avg
+			worst = avg
+			rq.worstReleaseID = e.releaseID
+			rq.bestReleaseID = e.releaseID
+		} else {
+			if avg < best {
+				best = avg
+				rq.bestReleaseID = e.releaseID
+			} else if avg > worst {
+				worst = avg
+				rq.worstReleaseID = e.releaseID
+			}
+		}
+	}
+	return rq
+}
 
-	// }
-	return ss
+func getHistory(events []ReleaseStats) []string {
+	hs := []string{}
+	sort.Slice(events, func(i, j int) bool {
+		return events[i].releaseID < events[j].releaseID
+	})
+	for _, v := range events {
+		hs = append(hs, v.releaseID)
+	}
+	fmt.Println(events)
+	return hs
 }
 
 func checkErr(err error) {
