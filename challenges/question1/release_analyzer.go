@@ -139,7 +139,6 @@ func getHistory(events []ReleaseStats) []string {
 	for _, v := range events {
 		hs = append(hs, v.releaseID)
 	}
-	fmt.Println(events)
 	return hs
 }
 
