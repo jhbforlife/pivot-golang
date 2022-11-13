@@ -14,7 +14,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var charBaseURL = "https://gateway.marvel.com/v1/public/characters"
+var CharBaseURL = "https://gateway.marvel.com/v1/public/characters"
 var publicKey, privateKey = getKeys()
 var httpClient = &http.Client{
 	Timeout: 10 * time.Second,
@@ -36,8 +36,8 @@ type Client struct {
 	httpClient *http.Client
 }
 
-func NewCharClient() Client {
-	return Client{charBaseURL, publicKey, privateKey, httpClient}
+func NewClient(url string) Client {
+	return Client{url, publicKey, privateKey, httpClient}
 }
 
 func (c *Client) getHash(t int64) string {

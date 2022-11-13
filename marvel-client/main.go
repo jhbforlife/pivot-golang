@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jhbforlife/pivot-golang/cmd/marvel-client/marvel"
+	"github.com/jhbforlife/pivot-golang/marvel-client/marvel"
 )
 
 func main() {
-	client := marvel.NewCharClient()
+	client := marvel.NewClient(marvel.CharBaseURL)
 	chars, err := client.GetCharsWithLimit(4)
 	if err != nil {
 		log.Fatal(err)

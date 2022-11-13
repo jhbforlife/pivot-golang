@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jhbforlife/pivot-golang/cmd/writing-tests/calculator"
+	"github.com/jhbforlife/pivot-golang/writing-tests/calculator"
 )
 
 func TestCalculator(t *testing.T) {
