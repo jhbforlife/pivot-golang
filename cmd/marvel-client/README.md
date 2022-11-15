@@ -28,7 +28,8 @@ Build an HTTP Client to retrieve a list of Marvel characters.
 - [Class recording where instructor builds a simple client using the Marvel API](https://www.notion.so/Building-a-web-server-7878a2a6edfe498f8d873e0cc2175b22)
 
 ## Example of Implementation
-input: `go run main.go`  
+input:  
+`go run main.go`  
 output:  
 ```
 3-D Man
