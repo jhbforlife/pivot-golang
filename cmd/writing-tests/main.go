@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jhbforlife/pivot-golang/writing-tests/calculator"
+	"github.com/jhbforlife/pivot-golang/cmd/writing-tests/calculator"
 )
 
 func main() {
