@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jhbforlife/pivot-golang/cmd/marvel-client/marvel"
+	"github.com/jhbforlife/pivot-golang/marvel"
 )
 
 func main() {
