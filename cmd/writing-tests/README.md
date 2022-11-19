@@ -28,7 +28,7 @@ Create a calculator library and write the tests that ensure all of its operation
 - [Recording from 10/31/22 class](https://www.notion.so/f20d8d35d0ed424ba30de523b31a81ea)
 
 ## Examples of Implementation
-### [/product-server/writing-tests](https://github.com/jhbforlife/pivot-golang/writing-tests)  
+### [/writing-tests](https://github.com/jhbforlife/pivot-golang/cmd/writing-tests)  
 run `go run main.go`
 
 input   `2 + 2`  
@@ -46,7 +46,7 @@ output  `Result: 9`
 input   `1/0`  
 output  `calculator: cannot divide by 0, please try again`
 
-### [/product-server/writing-tests/calculator](https://github.com/jhbforlife/pivot-golang/writing-tests/calculator)  
+### [/calculator](https://github.com/jhbforlife/pivot-golang/calculator)  
 run `go test -v`  
 output  
 ```=== RUN   TestCalculator
