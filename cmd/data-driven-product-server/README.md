@@ -70,10 +70,6 @@ This part of your assignment calls for refactoring your existing product server�
 9. Your work is done on a separate branch (e.g. `refactor-product-server-handlers`) and you provide a link to a GitHub pull request (PR) against your repository’s `main` branch with your solution for evaluation.
 10. Your PR’s comment includes a copy of the output of your program for each endpoint you call via a client such as `curl`. You must show the `curl` calls and the server’s response underneath.
 
-# Part 3: Tracking Inventory
-
-Coming Soon.
-
 # Resources
 
 1. [SQLite tutorial](https://www.youtube.com/watch?v=zLQ03DeH04c&list=PL-1QdJ8od_eyxntzYQhwCkcVZlqWVrmSf&index=1)
