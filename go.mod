@@ -7,4 +7,4 @@ require (
 	github.com/joho/godotenv v1.4.0
 )
 
-require github.com/mattn/go-sqlite3 v1.14.16 // indirect
+require github.com/mattn/go-sqlite3 v1.14.16

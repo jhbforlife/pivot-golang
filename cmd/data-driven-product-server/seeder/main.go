@@ -22,7 +22,7 @@ type Table struct {
 	Columns Columns
 }
 
-type Columns []string
+type Columns string
 type Product struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -35,7 +35,7 @@ const (
 	prodJSONPath             = "products.json"
 	createTableStatement     = "create table %s (%s)"
 	insertIntoTableStatement = "insert into %s(%s) values(%s)"
-	prodColumns              = "id integer not null primary key, name text, description text, price real"
+	selectStatement          = "select %s from %s %s"
 )
 
 func main() {
@@ -46,7 +46,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	prodColumns := Columns{"id integer not null primary key", "name text", "description text", "price real"}
+	prodColumns := Columns("id integer not null primary key, name text, description text, price real")
 	db.createTable("products", prodColumns)
 	prodJSON, err := loadJSON(prodJSONPath)
 	if err != nil {
@@ -55,6 +55,13 @@ func main() {
 	tb := db.Tables["products"]
 	if err := tb.injectProductJSON(prodJSON); err != nil {
 		log.Fatal(err)
+	}
+	prodsFive, err := tb.queryProducts(fmt.Sprintf(selectStatement, "*", tb.Name, "limit 5"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, p := range prodsFive {
+		fmt.Printf("ID: %d, Name: %s, Description: %s, Price: %d\n", p.ID, p.Name, p.Description, p.Price)
 	}
 }
 
@@ -125,6 +132,22 @@ func (t *Table) injectProductJSON(bs []byte) error {
 	return nil
 }
 
-func (t *Table) query() {
-
+func (t *Table) queryProducts(q string) ([]Product, error) {
+	var prods []Product
+	rows, err := t.DB.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var prod Product
+		if err := rows.Scan(&prod.ID, &prod.Name, &prod.Description, &prod.Price); err != nil {
+			return nil, err
+		}
+		prods = append(prods, prod)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return prods, nil
 }
