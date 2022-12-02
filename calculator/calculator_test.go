@@ -56,3 +56,24 @@ func TestCalculator(t *testing.T) {
 		})
 	}
 }
+
+func TestPow(t *testing.T) {
+	testCases := []struct {
+		x    float64
+		y    float64
+		want float64
+	}{
+		{1, 10, 1},
+		{100, 0, 1},
+		{2, 3, 8},
+		{9, 2, 81},
+		{5, 5, 3125},
+	}
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%f^%f", tc.x, tc.y), func(t *testing.T) {
+			if got := calculator.Pow(tc.x, tc.y); got != tc.want {
+				t.Errorf("got: %f - want: %f", got, tc.want)
+			}
+		})
+	}
+}
