@@ -156,7 +156,7 @@ func addProdHandler(w http.ResponseWriter, r *http.Request) {
 	var prod Product
 	if err := json.Unmarshal(body, &prod); err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if prod.ID != 0 || len(strings.Fields(prod.Name)) == 0 || len(strings.Fields(prod.Description)) == 0 || prod.Price == 0 {
@@ -221,7 +221,7 @@ func updateProdByIDHandler(w http.ResponseWriter, r *http.Request) {
 	var newProd Product
 	if err := json.Unmarshal(body, &newProd); err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	if (idInt != newProd.ID && newProd.ID != 0) || len(strings.Fields(newProd.Name)) == 0 || len(strings.Fields(newProd.Description)) == 0 || newProd.Price == 0 {
