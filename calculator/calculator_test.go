@@ -70,8 +70,10 @@ func TestPow(t *testing.T) {
 		{5, 5, 3125},
 	}
 	for _, tc := range testCases {
-		if got := calculator.Pow(tc.x, tc.y); got != tc.want {
-			t.Errorf("got: %f - want: %f", got, tc.want)
-		}
+		t.Run(fmt.Sprintf("%f^%f", tc.x, tc.y), func(t *testing.T) {
+			if got := calculator.Pow(tc.x, tc.y); got != tc.want {
+				t.Errorf("got: %f - want: %f", got, tc.want)
+			}
+		})
 	}
 }
